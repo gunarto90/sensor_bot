@@ -51,6 +51,7 @@ def webhook():
 
                     send_message(sender_id, "roger that!")
                     ### Perform analytics here (any logic)
+                    log_db(sender_id, message_text)
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
