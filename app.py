@@ -10,16 +10,6 @@ import requests
 from flask import Flask, request
 from mysql import *
 
-### Mysql settings ###
-HOST = '140.113.213.14'
-# HOST = 'localhost'
-PORT = 3306
-DATABASE = 'lalala'
-USER = 'fb'
-PASS = 'fb'
-TABLE = 'messenger'
-### End Mysql settings ###
-
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
@@ -82,7 +72,7 @@ def send_message(recipient_id, message_text):
             "text": message_text
         }
     })
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    r = requests.post(FB_API_URL, params=params, headers=headers, data=data)
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
@@ -92,13 +82,13 @@ def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
     sys.stdout.flush()
 
-def log_db(sender, message):
+def log_messenger_db(sender, message):
     conn = None
     err_message = 'OK'
     try:
-        sql = "insert into {} (sender, message, time, timestamp) values ('{}', '{}', '{}', {})".format(TABLE, sender, message, datetime.datetime.now(), int(time.time()))
+        sql = "insert into {} (sender, message, time, timestamp) values ('{}', '{}', '{}', {})".format(MESSENGER_TABLE, sender, message, datetime.datetime.now(), int(time.time()))
         log(sql)
-        conn = connect(HOST, PORT, DATABASE, USER, PASS)
+        conn = connect(HOST, DB_PORT, DATABASE, USER, PASS)
         result, err_message = query(conn, sql)
         log(err_message)
     except Exception as ex:
@@ -108,8 +98,31 @@ def log_db(sender, message):
             conn.close()
     return err_message
 
+def read_config(json_filename):
+    ### API global variables
+    global HOST, API_PORT
+    ### Database global variables
+    global DB_PORT, DATABASE, USER, PASS, MESSENGER_TABLE
+    ### Facebook API global variables
+    global FB_API_URL
+    ### Misc. variables
+    global DEBUG
+    ### Read the json config file
+    with open(json_filename) as data_file:
+        data = json.load(data_file)
+        ### Read the config from the json file
+        USER = data['USERNAME']
+        PASS = data['PASSWORD']
+        HOST = data['API_HOST']
+        API_PORT = data['API_PORT']
+        DB_PORT = data['DB_PORT']
+        DATABASE = data['DATABASE']
+        MESSENGER_TABLE = data['TABLE']['messenger']
+        DEBUG = data['DEBUG']
+        FB_API_URL = data['FB']['api_url']
+
 if __name__ == '__main__':
+    json_filename = 'mysql_setting.json'
+    read_config(json_filename)
     ### App variables
-    PORT = 5000
-    DEBUG = False
-    app.run(port=PORT, host=HOST, debug=DEBUG)
+    app.run(port=API_PORT, host=HOST, debug=DEBUG)
