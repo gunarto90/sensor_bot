@@ -8,8 +8,5 @@
 	"TABLE":{
 		"messenger":"tablename"
 	},
-	"FB":{
-		"api_url":"https://graph.facebook.com/v2.6/me/messages"
-	},
 	"DEBUG":true
 }

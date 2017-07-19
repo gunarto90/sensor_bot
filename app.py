@@ -9,8 +9,30 @@ import time
 import requests
 from flask import Flask, request
 from mysql import *
+from setting_variables import *
+from testing import test
 
 app = Flask(__name__)
+
+def read_config(json_filename):
+    ### API global variables
+    global HOST, API_PORT
+    ### Database global variables
+    global DB_PORT, DATABASE, USER, PASS, MESSENGER_TABLE
+    ### Misc. variables
+    global DEBUG
+    ### Read the json config file
+    with open(json_filename) as data_file:
+        data = json.load(data_file)
+        ### Read the config from the json file
+        USER = data['USERNAME']
+        PASS = data['PASSWORD']
+        HOST = data['API_HOST']
+        API_PORT = data['API_PORT']
+        DB_PORT = data['DB_PORT']
+        DATABASE = data['DATABASE']
+        MESSENGER_TABLE = data['TABLE']['messenger']
+        DEBUG = data['DEBUG']
 
 @app.route('/', methods=['GET'])
 @app.route('/welcome')
@@ -24,7 +46,12 @@ def verify():
             return "Verification token mismatch", 403
         return request.args["hub.challenge"], 200
 
-    return "Hello world", 200
+    hello_message = """
+    Hello World <br/>
+    This server is built on heroku server.
+    """
+
+    return hello_message, 200
 
 @app.route('/', methods=['POST'])
 def webhook():
@@ -53,7 +80,7 @@ def webhook():
 
 @app.route('/testing', methods=['GET'])
 def testing():
-    message = log_db('abcde', 'aaaa message new')
+    message = test()
     return message, 200
 
 def send_message(recipient_id, message_text):
@@ -97,29 +124,6 @@ def log_messenger_db(sender, message):
         if conn != None:
             conn.close()
     return err_message
-
-def read_config(json_filename):
-    ### API global variables
-    global HOST, API_PORT
-    ### Database global variables
-    global DB_PORT, DATABASE, USER, PASS, MESSENGER_TABLE
-    ### Facebook API global variables
-    global FB_API_URL
-    ### Misc. variables
-    global DEBUG
-    ### Read the json config file
-    with open(json_filename) as data_file:
-        data = json.load(data_file)
-        ### Read the config from the json file
-        USER = data['USERNAME']
-        PASS = data['PASSWORD']
-        HOST = data['API_HOST']
-        API_PORT = data['API_PORT']
-        DB_PORT = data['DB_PORT']
-        DATABASE = data['DATABASE']
-        MESSENGER_TABLE = data['TABLE']['messenger']
-        DEBUG = data['DEBUG']
-        FB_API_URL = data['FB']['api_url']
 
 if __name__ == '__main__':
     json_filename = 'mysql_setting.json'
