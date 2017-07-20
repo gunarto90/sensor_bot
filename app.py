@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# coding=utf-8
 import os
 import sys
 import json
@@ -9,6 +10,7 @@ import time
 import requests
 from flask import Flask, request
 from mysql import *
+import text_cn
 from setting_variables import *
 from testing import test
 
@@ -16,9 +18,9 @@ app = Flask(__name__)
 
 def read_config(json_filename):
     ### API global variables
-    global HOST, API_PORT
+    global API_HOST, API_PORT
     ### Database global variables
-    global DB_PORT, DATABASE, USER, PASS, MESSENGER_TABLE
+    global DB_HOST, DB_PORT, DATABASE, USER, PASS, MESSENGER_TABLE
     ### Misc. variables
     global DEBUG
     ### Read the json config file
@@ -27,8 +29,9 @@ def read_config(json_filename):
         ### Read the config from the json file
         USER = data['USERNAME']
         PASS = data['PASSWORD']
-        HOST = data['API_HOST']
+        API_HOST = data['API_HOST']
         API_PORT = data['API_PORT']
+        DB_HOST = data['DB_HOST']
         DB_PORT = data['DB_PORT']
         DATABASE = data['DATABASE']
         MESSENGER_TABLE = data['TABLE']['messenger']
@@ -115,7 +118,7 @@ def log_messenger_db(sender, message):
     try:
         sql = "insert into {} (sender, message, time, timestamp) values ('{}', '{}', '{}', {})".format(MESSENGER_TABLE, sender, message, datetime.datetime.now(), int(time.time()))
         log(sql)
-        conn = connect(HOST, DB_PORT, DATABASE, USER, PASS)
+        conn = connect(DB_HOST, DB_PORT, DATABASE, USER, PASS)
         result, err_message = query(conn, sql)
         log(err_message)
     except Exception as ex:
@@ -126,7 +129,16 @@ def log_messenger_db(sender, message):
     return err_message
 
 if __name__ == '__main__':
+    ### Initialize configuration
     json_filename = 'mysql_setting.json'
     read_config(json_filename)
-    ### App variables
-    app.run(port=API_PORT, host=HOST, debug=DEBUG)
+    ### Initialize jieba
+    stop_words_filename = 'jieba_dict/stop_words.txt'
+    idf_filename = 'jieba_dict/idf.txt.big'
+    text_cn.init_jieba(stop_words_filename, idf_filename)
+    ### Initialize qa
+    qa_text_file = './qa_dataset/QA.txt'
+    question_set, answer_set = text_cn.open_qa_file(qa_text_file)
+    keywords, keyword_set, num_of_keyword = text_cn.extract_keywords(question_set)
+    ### Initialize webserver
+    app.run(port=API_PORT, host=API_HOST, debug=DEBUG)
