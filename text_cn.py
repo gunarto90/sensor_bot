@@ -6,7 +6,6 @@ def init_jieba(stop_words_filename, idf_filename):
     jieba.analyse.set_stop_words(stop_words_filename)
     jieba.analyse.set_idf_path(idf_filename)
 
-
 def extract_keywords(question_set):
     keyword_set = [] 
     num_of_keyword = []
@@ -27,3 +26,5 @@ if __name__ == '__main__':
     stop_words_filename = 'jieba_dict/stop_words.txt'
     idf_filename = 'jieba_dict/idf.txt.big'
     init_jieba(stop_words_filename, idf_filename)
+
+    qa_text_file = './qa_dataset/QA.txt'
