@@ -65,6 +65,7 @@ if __name__ == '__main__':
     ### Initialize configuration
     json_filename = 'app_setting.json'
     read_config(json_filename)
+    print(var.variables)
     ### Initialize jieba
     stop_words_filename = 'jieba_dict/stop_words.txt'
     idf_filename = 'jieba_dict/idf.txt.big'
