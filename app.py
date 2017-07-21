@@ -12,7 +12,7 @@ from flask import Flask, request
 from mysql import *
 import text_cn
 from setting_variables import *
-from testing import test
+from testing import *
 
 app = Flask(__name__)
 
@@ -83,8 +83,13 @@ def webhook():
 
 @app.route('/testing', methods=['GET'])
 def testing():
-    message = test()
+    message = run_testing()
     return message, 200
+
+def run_testing():
+    message = test()
+    print message
+    return message
 
 def send_message(recipient_id, message_text):
     log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
@@ -130,7 +135,7 @@ def log_messenger_db(sender, message):
 
 if __name__ == '__main__':
     ### Initialize configuration
-    json_filename = 'mysql_setting.json'
+    json_filename = 'app_setting.json'
     read_config(json_filename)
     ### Initialize jieba
     stop_words_filename = 'jieba_dict/stop_words.txt'
@@ -138,6 +143,7 @@ if __name__ == '__main__':
     text_cn.init_jieba(stop_words_filename, idf_filename)
     ### Initialize qa
     qa_text_file = './qa_dataset/QA.txt'
+    global question_set, answer_set, keywords, keyword_set, num_of_keyword
     question_set, answer_set = text_cn.open_qa_file(qa_text_file)
     keywords, keyword_set, num_of_keyword = text_cn.extract_keywords(question_set)
     ### Initialize webserver

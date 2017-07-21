@@ -1,4 +1,4 @@
 *.pyc
 .*
 venv/
-mysql_setting.json
+app_setting.json
