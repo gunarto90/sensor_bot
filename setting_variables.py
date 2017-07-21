@@ -1,18 +1,19 @@
+variables = {}
 ### Facebook API global variables
-FB_API_URL = 'https://graph.facebook.com/v2.6/me/messages'
-DEBUG = True
+variables["FB_API_URL"] = 'https://graph.facebook.com/v2.6/me/messages'
+variables["DEBUG"] = True
 ### Credential
-USER = 'user'
-PASS = 'pass'
+variables["USER"] = 'user'
+variables["PASS"] = 'pass'
 ### API settings
-API_HOST = 'host'
-API_PORT = 0
+variables["API_HOST"] = 'host'
+variables["API_PORT"] = 0
 ### Database settings
-DB_HOST = 'host'
-DB_PORT = 0
-SCHEMA = 'db'
-MESSENGER_TABLE = 'messenger'
+variables["DB_HOST"] = 'host'
+variables["DB_PORT"] = 0
+variables["SCHEMA"] = 'db'
+variables["MESSENGER_TABLE"] = 'messenger'
 ### Text mining variables
-QUESTIONS = None
-ANSWERS = None
-KEYWORDS = None
+variables["QUESTIONS"] = None
+variables["ANSWERS"] = None
+variables["KEYWORDS"] = None

@@ -10,21 +10,6 @@ import text_cn
 
 app = Flask(__name__)
 
-def read_config(json_filename):
-    ### Read the json config file
-    with open(json_filename) as data_file:
-        data = json.load(data_file)
-        ### Read the config from the json file
-        var.USER = data['USERNAME']
-        var.PASS = data['PASSWORD']
-        var.API_HOST = data['API_HOST']
-        var.API_PORT = data['API_PORT']
-        var.DB_HOST = data['DB_HOST']
-        var.DB_PORT = data['DB_PORT']
-        var.SCHEMA = data['DATABASE']
-        var.MESSENGER_TABLE = data['TABLE']['messenger']
-        var.DEBUG = data['DEBUG']
-
 @app.route('/', methods=['GET'])
 @app.route('/welcome')
 @app.route('/help')
@@ -57,7 +42,8 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
 
-                    bot_answer = text_cn.qa_answering(message_text, var.ANSWERS, var.KEYWORDS)
+                    # bot_answer = text_cn.qa_answering(message_text, var.variables["ANSWERS"], var.variables["KEYWORDS"])
+                    bot_answer = 'OK, roger that'
                     send_message(sender_id, bot_answer)
                     ### Perform analytics here (any logic)
                     log_messenger_db(sender_id, message_text, bot_answer)
@@ -85,8 +71,8 @@ if __name__ == '__main__':
     text_cn.init_jieba(stop_words_filename, idf_filename)
     ### Initialize qa
     qa_text_file = './qa_dataset/QA.txt'
-    var.QUESTIONS, var.ANSWERS = text_cn.open_qa_file(qa_text_file)
-    var.KEYWORDS, keyword_set, num_of_keyword = text_cn.extract_keywords(var.QUESTIONS)
+    var.variables["QUESTIONS"], var.variables["ANSWERS"] = text_cn.open_qa_file(qa_text_file)
+    var.variables["KEYWORDS"], keyword_set, num_of_keyword = text_cn.extract_keywords(var.variables["QUESTIONS"])
     # run_testing()
     ### Initialize webserver
-    app.run(port=API_PORT, host=API_HOST, debug=var.DEBUG)
+    app.run(port=API_PORT, host=API_HOST, debug=var.variables["DEBUG"])

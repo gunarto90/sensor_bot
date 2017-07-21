@@ -16,6 +16,21 @@ def run_testing():
     test_functions()
     return message
 
+def read_config(json_filename):
+    ### Read the json config file
+    with open(json_filename) as data_file:
+        data = json.load(data_file)
+        ### Read the config from the json file
+        var.variables["USER"] = data['USERNAME']
+        var.variables["PASS"] = data['PASSWORD']
+        var.variables["API_HOST"] = data['API_HOST']
+        var.variables["API_PORT"] = data['API_PORT']
+        var.variables["DB_HOST"] = data['DB_HOST']
+        var.variables["DB_PORT"] = data['DB_PORT']
+        var.variables["SCHEMA"] = data['DATABASE']
+        var.variables["MESSENGER_TABLE"] = data['TABLE']['messenger']
+        var.variables["DEBUG"] = data['DEBUG']
+
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
     sys.stdout.flush()
@@ -25,9 +40,9 @@ def log_messenger_db(sender, message, bot_answer):
     conn = None
     err_message = 'OK'
     try:
-        sql = "insert into {} (sender, message, bot_answer, time, timestamp) values ('{}', '{}', '{}', '{}', {})".format(var.MESSENGER_TABLE, sender, message, bot_answer, datetime.datetime.now(), int(time.time()))
+        sql = "insert into {} (sender, message, bot_answer, time, timestamp) values ('{}', '{}', '{}', '{}', {})".format(var.variables["MESSENGER_TABLE"], sender, message, bot_answer, datetime.datetime.now(), int(time.time()))
         log(sql)
-        conn = mysql.connect(var.DB_HOST, var.DB_PORT, var.SCHEMA, var.USER, var.PASS)
+        conn = mysql.connect(var.variables["DB_HOST"], var.variables["DB_PORT"], var.variables["SCHEMA"], var.variables["USER"], var.variables["PASS"])
         result, err_message = mysql.query(conn, sql)
         log(err_message)
     except Exception as ex:
@@ -54,7 +69,7 @@ def send_message(recipient_id, message_text):
             "text": message_text
         }
     })
-    r = requests.post(var.FB_API_URL, params=params, headers=headers, data=data)
+    r = requests.post(var.variables["FB_API_URL"], params=params, headers=headers, data=data)
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
