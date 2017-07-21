@@ -10,7 +10,11 @@ def connect(host, port, db, user, passwd):
     return conn
 
 def close(conn):
-    conn.close()
+    try:
+        conn.close()
+        return 'OK'
+    except Exception as ex:
+        return str(ex)
 
 def query(conn, sql):
     result = []
@@ -27,3 +31,4 @@ def query(conn, sql):
 
 if __name__ == '__main__':
     conn = connect('localhost', 3306, 'lalala', 'fb', 'fb')
+    close(conn)
