@@ -18,8 +18,8 @@ def test_functions():
     print(str(out))
     out = func.log_messenger_db('sender789', 'message123', 'answer456')
     print(str(out))
-    out = func.send_message('recipient_id789', 'message123')
+    out = func.send_message('1880931025257113', 'message123')
     print(str(out))
 
 if __name__ == '__main__':
-    test()
+    test_functions()
