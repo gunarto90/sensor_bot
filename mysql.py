@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 ### Opening mysql through python
 import pymysql
+import setting_variables as var
 
 ##### MySQL Connection #####
 def connect(host, port, db, user, passwd):
