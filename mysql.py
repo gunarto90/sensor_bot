@@ -4,9 +4,18 @@ import pymysql
 
 ##### MySQL Connection #####
 def connect(host, port, db, user, passwd):
-    print('Trying to connect to {} has been established (user: {})'.format(host, user))
-    conn = pymysql.connect(host=host, port=port, user=user, passwd=passwd, db=db, charset='utf8', autocommit=True)
-    print('Connection to {} has been established (user: {})'.format(host, user))
+    if var.variables["DEBUG"]:
+        log('Trying to connect to {} has been established (user: {})'.format(host, user))
+    conn = None
+    try:
+        conn = pymysql.connect(host=host, port=port, user=user, passwd=passwd, db=db, charset='utf8', autocommit=True)
+    except Exception as ex:
+        if var.variables["DEBUG"]:
+            log(str(ex))
+        if conn is not None:
+            close(conn)
+    if var.variables["DEBUG"]:
+        log('Connection to {} has been established (user: {})'.format(host, user))
     return conn
 
 def close(conn):
@@ -17,6 +26,8 @@ def close(conn):
         return str(ex)
 
 def query(conn, sql):
+    if conn is None:
+        return None, "No connection to the mysql server"
     result = []
     cur = conn.cursor()
     cur.execute(sql)
