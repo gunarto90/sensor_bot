@@ -23,9 +23,12 @@ def test_functions():
     print(var.variables)
     out = func.log('test')
     print(str(out))
-    out = func.log_messenger_db('sender789', 'message123', 'answer456')
+    fb_recipient = '1880931025257113'
+    message = 'message123'
+    bot_answer = 'answer456'
+    out = func.log_messenger_db(fb_recipient, message, bot_answer)
     print(str(out))
-    out = func.send_message('1880931025257113', 'message123')
+    out = func.send_message(fb_recipient, message)
     print(str(out))
 
 if __name__ == '__main__':
