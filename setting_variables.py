@@ -1,19 +1,31 @@
 variables = {}
-### Facebook API global variables
+### Global variables
 variables["FB_API_URL"] = 'https://graph.facebook.com/v2.6/me/messages'
+variables["JSON_FILENAME"] = 'app_setting.json'
 variables["DEBUG"] = True
+
+apis = {}
 ### Credential
-variables["USER"] = 'user'
-variables["PASS"] = 'pass'
+apis["USER"] = 'user'
+apis["PASS"] = 'pass'
 ### API settings
-variables["API_HOST"] = 'host'
-variables["API_PORT"] = 0
+apis["API_HOST"] = 'host'
+apis["API_PORT"] = 0
 ### Database settings
-variables["DB_HOST"] = 'host'
-variables["DB_PORT"] = 0
-variables["SCHEMA"] = 'db'
-variables["MESSENGER_TABLE"] = 'messenger'
+apis["DB_HOST"] = 'host'
+apis["DB_PORT"] = 0
+apis["SCHEMA"] = 'db'
+apis["MESSENGER_TABLE"] = 'messenger'
+
+qas = {}
 ### Text mining variables
-variables["QUESTIONS"] = None
-variables["ANSWERS"] = None
-variables["KEYWORDS"] = None
+qas["QUESTIONS"] = None
+qas["ANSWERS"] = None
+qas["KEYWORDS"] = None
+
+jieba = {}
+jieba["TOPK"] = 20
+jieba["WEIGHT_ENABLE"] = False
+jieba["ALLOW_POS"] = ()
+jieba["STOP_WORDS_FILENAME"] ='jieba_dict/stop_words.txt'
+jieba["IDF_FILENAME"] = 'jieba_dict/idf.txt.big'

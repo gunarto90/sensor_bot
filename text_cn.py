@@ -3,15 +3,22 @@
 import jieba
 import jieba.analyse
 import codecs
+import setting_variables as var
+from app_function import *
 
-topK = 20
-withWeight = False
-allowPOS = ()
 # default_message = "找不到符合的答案"
 
-def init_jieba(stop_words_filename, idf_filename):
-    jieba.analyse.set_stop_words(stop_words_filename)
-    jieba.analyse.set_idf_path(idf_filename)
+def init_jieba(stop_words_filename=None, idf_filename=None):
+    if stop_words_filename is None:
+        stop_words_filename = var.jieba["STOP_WORDS_FILENAME"]
+    if idf_filename is None:
+        idf_filename = var.jieba["IDF_FILENAME"]
+    try:
+        jieba.analyse.set_stop_words(stop_words_filename)
+        jieba.analyse.set_idf_path(idf_filename)
+    except Exception as ex:
+        return str(ex)
+    return 'OK'
 
 def open_qa_file(filename):
     question_set = []
@@ -28,6 +35,9 @@ def open_qa_file(filename):
     return question_set, answer_set
 
 def segment(question):
+    topK = var.jieba["TOPK"]
+    withWeight = var.jieba["WEIGHT_ENABLE"]
+    allowPOS = var.jieba["ALLOW_POS"]
     words = jieba.analyse.extract_tags(question, topK=topK, withWeight=withWeight, allowPOS=allowPOS)
     return words
 
@@ -44,7 +54,11 @@ def extract_keywords(question_set):
 
     return keywords, keyword_set, num_of_keyword
 
-def qa_answering(sentence, answer_db, keyword_set_db):
+def qa_answering(sentence, answer_db=None, keyword_set_db=None):
+    if answer_db is None:
+        answer_db=var.qas["ANSWERS"]
+    if keyword_set_db is None:
+        keyword_set_db=var.qas["KEYWORDS"]
     scores = {}
     words = segment(sentence)
     for word in words:
@@ -60,16 +74,17 @@ def qa_answering(sentence, answer_db, keyword_set_db):
     return answer_db[index]
 
 if __name__ == '__main__':
+    ### Initialize configuration
+    read_config()
     ### Initialize jieba
-    stop_words_filename = 'jieba_dict/stop_words.txt'
-    idf_filename = 'jieba_dict/idf.txt.big'
-    init_jieba(stop_words_filename, idf_filename)
+    init_jieba()
 
     qa_text_file = './qa_dataset/QA.txt'
-    question_set, answer_set = open_qa_file(qa_text_file)
-    keywords, keyword_set, num_of_keyword = extract_keywords(question_set)
+    ### TODO: Need to set default
+    var.qas["QUESTIONS"], var.qas["ANSWERS"] = open_qa_file(qa_text_file)
+    var.qas["KEYWORDS"], keyword_set, num_of_keyword = extract_keywords(var.qas["QUESTIONS"])
 
     qq = ['正常人的血糖應該多少才正常?']
     for q in qq:
-        a = qa_answering(q, answer_set, keywords)
+        a = qa_answering(q)
         print a

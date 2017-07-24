@@ -46,8 +46,8 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
 
-                    # bot_answer = text_cn.qa_answering(message_text, var.variables["ANSWERS"], var.variables["KEYWORDS"])
-                    bot_answer = 'OK, roger that'
+                    bot_answer = text_cn.qa_answering(message_text, var.variables["ANSWERS"], var.variables["KEYWORDS"])
+                    # bot_answer = 'OK, roger that'
                     send_message(sender_id, bot_answer)
                     ### Perform analytics here (any logic)
                     log_messenger_db(sender_id, message_text, bot_answer)
@@ -67,16 +67,12 @@ def testing():
 
 if __name__ == '__main__':
     ### Initialize configuration
-    json_filename = 'app_setting.json'
-    read_config(json_filename)
+    read_config()
     ### Initialize jieba
-    stop_words_filename = 'jieba_dict/stop_words.txt'
-    idf_filename = 'jieba_dict/idf.txt.big'
-    text_cn.init_jieba(stop_words_filename, idf_filename)
+    text_cn.init_jieba()
     ### Initialize qa
     qa_text_file = './qa_dataset/QA.txt'
-    var.variables["QUESTIONS"], var.variables["ANSWERS"] = text_cn.open_qa_file(qa_text_file)
-    var.variables["KEYWORDS"], keyword_set, num_of_keyword = text_cn.extract_keywords(var.variables["QUESTIONS"])
-    # run_testing()
+    var.qas["QUESTIONS"], var.qas["ANSWERS"] = text_cn.open_qa_file(qa_text_file)
+    var.qas["KEYWORDS"], keyword_set, num_of_keyword = text_cn.extract_keywords(var.qas["QUESTIONS"])
     ### Initialize webserver
     app.run(port=API_PORT, host=API_HOST, debug=var.variables["DEBUG"])
