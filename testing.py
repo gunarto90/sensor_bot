@@ -4,6 +4,7 @@
 import setting_variables as var
 import app_function as func
 import text_cn
+import mysql
 
 def test():
     message = 'test'
@@ -20,15 +21,16 @@ def test_functions():
     ### Initialize configuration
     func.system_init()
     ### Print out setting variables
-    print var.variables
-    print var.apis
-    print var.jieba
-    out = func.log('test')
-    print str(out)
+    # print var.variables
+    # print var.apis
+    # print var.jieba
+    # out = func.log('test')
+    # print str(out)
     
-    test_fb()
-    test_text_cn()
-    test_qa()
+    # test_fb()
+    # test_text_cn()
+    # test_qa()
+    test_mysql()
 
 def test_fb():
     fb_recipient = '1880931025257113'
@@ -56,6 +58,16 @@ def test_qa():
         print q
         print a
         print confidence
+
+def test_mysql():
+    conn = mysql.connect(var.apis["DB_HOST"], var.apis["DB_PORT"], var.apis["SCHEMA"], var.apis["USER"], var.apis["PASS"])
+    print conn
+    sql = "insert into messenger (sender, message, bot_answer, time, timestamp) values ('1880931025257113', 'Question in testing.py', '你好', '2000-01-01 07:00:00.975645', 1000000000);"
+    print sql
+    result, message = mysql.query(conn, sql)
+    print result
+    print message
+    mysql.close(conn)
 
 if __name__ == '__main__':
     test_functions()
