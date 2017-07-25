@@ -2,6 +2,7 @@
 ### Opening mysql through python
 import pymysql
 import setting_variables as var
+import testing
 
 ##### MySQL Connection #####
 def connect(host, port, db, user, passwd):
@@ -43,5 +44,4 @@ def query(conn, sql):
     return result, message
 
 if __name__ == '__main__':
-    conn = connect('localhost', 3306, 'lalala', 'fb', 'fb')
-    close(conn)
+    testing.test_mysql()
