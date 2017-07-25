@@ -31,10 +31,10 @@ def verify():
 
 @app.route('/', methods=['POST'])
 def webhook():
-    try:
-        log(var.variables)
-    except Exception as ex:
-        log(str(ex))
+    # try:
+    #     log(var.variables)
+    # except Exception as ex:
+    #     log(str(ex))
     # endpoint for processing incoming messaging events
     data = request.get_json()
     log(data)  # you may not want to log every incoming message in production, but it's good for testing
@@ -46,7 +46,7 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
 
-                    bot_answer = text_cn.qa_answering(message_text, var.variables["ANSWERS"], var.variables["KEYWORDS"])
+                    bot_answer = text_cn.qa_answering(message_text, var.qas["ANSWERS"], var.qas["KEYWORDS"])
                     # bot_answer = 'OK, roger that'
                     send_message(sender_id, bot_answer)
                     ### Perform analytics here (any logic)
