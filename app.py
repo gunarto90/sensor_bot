@@ -11,14 +11,7 @@ import text_cn
 def initialize_app():
     app = Flask(__name__)
     def run_on_start(*args, **argv):
-        ### Initialize configuration
-        read_config()
-        ### Initialize jieba
-        text_cn.init_jieba()
-        ### Initialize qa
-        qa_text_file = './qa_dataset/QA.txt'
-        var.qas["QUESTIONS"], var.qas["ANSWERS"] = text_cn.open_qa_file(qa_text_file)
-        var.qas["KEYWORDS"], keyword_set, num_of_keyword = text_cn.extract_keywords(var.qas["QUESTIONS"])
+        system_init()
     run_on_start()
     return app
 

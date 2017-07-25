@@ -4,9 +4,10 @@ import jieba
 import jieba.analyse
 import codecs
 import setting_variables as var
-from app_function import *
+import testing
+import app_function as func
 
-# default_message = "找不到符合的答案"
+default_message = "找不到符合的答案"
 
 def init_jieba(stop_words_filename=None, idf_filename=None):
     if stop_words_filename is None:
@@ -54,37 +55,51 @@ def extract_keywords(question_set):
 
     return keywords, keyword_set, num_of_keyword
 
-def qa_answering(sentence, answer_db=None, keyword_set_db=None):
+def qa_answering(sentence, answer_db=None, keywords_db=None):
     if answer_db is None:
         answer_db=var.qas["ANSWERS"]
-    if keyword_set_db is None:
-        keyword_set_db=var.qas["KEYWORDS"]
-    scores = {}
+    if keywords_db is None:
+        keywords_db=var.qas["KEYWORDS_SET"]
     words = segment(sentence)
+    given_answer, confidence = get_answer(words, answer_db, keywords_db, algo='frequency')
+    return given_answer, confidence
+
+def get_answer(words, answer_db, keywords_db, algo='frequency'):
+    scores = {}
+    given_answer = default_message
+    confidence = 0.0
+    # print words, len(words)
     for word in words:
-        for i in range(len(keyword_set_db)):
-            if word in keyword_set_db[i]:
+        for i in range(0, len(keywords_db)):
+            if word in keywords_db[i]:
                 found = scores.get(i)
                 if found is None:
                     found = 0
-                found += 1.0 / len(keyword_set_db[i])
+                if algo == 'frequency':
+                    found += 1.0
+                elif algo == 'ratio':
+                    found += 1.0 / len(keywords_db[i])
+                else:
+                    found += 1.0
                 scores[i] = found
-    index = max(scores, key=scores.get)
-    # value = max(scores, key=scores.get)
-    return answer_db[index]
+            # if scores.get(i) is not None:
+            #     print keywords_db[i], len(keywords_db[i]), scores[i]
+
+    if len(scores) > 0:
+        index = max(scores, key=scores.get)
+        given_answer = answer_db[index]
+        if algo == 'frequency':
+            confidence = scores[index]
+        elif algo == 'ratio':
+            confidence = scores[index]*100
+        else:
+            confidence = scores[index]
+    else:
+        given_answer = default_message
+        confidence = 100.0
+    return given_answer, confidence
 
 if __name__ == '__main__':
     ### Initialize configuration
-    read_config()
-    ### Initialize jieba
-    init_jieba()
-
-    qa_text_file = './qa_dataset/QA.txt'
-    ### TODO: Need to set default
-    var.qas["QUESTIONS"], var.qas["ANSWERS"] = open_qa_file(qa_text_file)
-    var.qas["KEYWORDS"], keyword_set, num_of_keyword = extract_keywords(var.qas["QUESTIONS"])
-
-    qq = ['正常人的血糖應該多少才正常?']
-    for q in qq:
-        a = qa_answering(q)
-        print a
+    func.system_init()
+    testing.test_qa()

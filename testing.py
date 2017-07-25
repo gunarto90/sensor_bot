@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# coding=utf-8
 
 import setting_variables as var
 import app_function as func
@@ -17,34 +18,44 @@ def test_print(message):
 
 def test_functions():    
     ### Initialize configuration
-    func.read_config()
+    func.system_init()
     ### Print out setting variables
-    print(var.variables)
-    print(var.apis)
-    print(var.jieba)
+    print var.variables
+    print var.apis
+    print var.jieba
     out = func.log('test')
-    print(str(out))
+    print str(out)
     
     test_fb()
     test_text_cn()
+    test_qa()
 
 def test_fb():
     fb_recipient = '1880931025257113'
     message = 'This message is sent from testing.py for a testing purpose only.'
     bot_answer = 'The answer is generated from testing.py just to store the data into database.'
     out = func.log_messenger_db(fb_recipient, message, bot_answer)
-    print(str(out))
+    print str(out)
     out = func.send_message(fb_recipient, message)
-    print(str(out))
+    print str(out)
 
 def test_text_cn():
     out = text_cn.init_jieba()
-    print(str(out))
+    print str(out)
     qa_text_file = './qa_dataset/QA.txt'
     ### TODO: Need to set default
     var.qas["QUESTIONS"], var.qas["ANSWERS"] = text_cn.open_qa_file(qa_text_file)
-    var.qas["KEYWORDS"], keyword_set, num_of_keyword = text_cn.extract_keywords(var.qas["QUESTIONS"])
-    print(var.qas)
+    var.qas["KEYWORDS"], var.qas["KEYWORDS_SET"], num_of_keyword = text_cn.extract_keywords(var.qas["QUESTIONS"])
+    print var.qas
+
+def test_qa():
+    qq = ['正常人的血糖應該多少才正常?', 'question', 'test', '當PM2.5達標時，適合外出運動嗎?', '什麼是PM2.5?', '正常人的BMI應該多少才正常?', 'BMI怎麼計算?', 'BMI', 'BMI計算']
+    for q in qq:
+        a, confidence = text_cn.qa_answering(q)
+        print '---'
+        print q
+        print a
+        print confidence
 
 if __name__ == '__main__':
     test_functions()

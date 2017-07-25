@@ -22,6 +22,7 @@ qas = {}
 qas["QUESTIONS"] = None
 qas["ANSWERS"] = None
 qas["KEYWORDS"] = None
+qas["KEYWORDS_SET"] = None
 
 jieba = {}
 jieba["TOPK"] = 20
