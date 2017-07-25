@@ -45,7 +45,7 @@ def read_config(json_filename=None):
         var.variables["DEBUG"] = data['DEBUG']
 
 def log(message):  # simple wrapper for logging to stdout on heroku	
-    message = unicode(message, 'utf-8')
+    message = unicode(str(message), 'utf-8')
     print message
     sys.stdout.flush()
     return 'OK'
