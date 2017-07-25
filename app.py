@@ -8,7 +8,21 @@ import setting_variables as var
 
 import text_cn
 
-app = Flask(__name__)
+def initialize_app():
+    app = Flask(__name__)
+    def run_on_start(*args, **argv):
+        ### Initialize configuration
+        read_config()
+        ### Initialize jieba
+        text_cn.init_jieba()
+        ### Initialize qa
+        qa_text_file = './qa_dataset/QA.txt'
+        var.qas["QUESTIONS"], var.qas["ANSWERS"] = text_cn.open_qa_file(qa_text_file)
+        var.qas["KEYWORDS"], keyword_set, num_of_keyword = text_cn.extract_keywords(var.qas["QUESTIONS"])
+    run_on_start()
+    return app
+
+app = initialize_app()
 
 @app.route('/', methods=['GET'])
 @app.route('/welcome')
@@ -66,13 +80,5 @@ def testing():
     return message, 200
 
 if __name__ == '__main__':
-    ### Initialize configuration
-    read_config()
-    ### Initialize jieba
-    text_cn.init_jieba()
-    ### Initialize qa
-    qa_text_file = './qa_dataset/QA.txt'
-    var.qas["QUESTIONS"], var.qas["ANSWERS"] = text_cn.open_qa_file(qa_text_file)
-    var.qas["KEYWORDS"], keyword_set, num_of_keyword = text_cn.extract_keywords(var.qas["QUESTIONS"])
     ### Initialize webserver
     app.run(port=API_PORT, host=API_HOST, debug=var.variables["DEBUG"])
