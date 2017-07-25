@@ -68,7 +68,7 @@ def log_messenger_db(sender, message, bot_answer):
 
 
 def send_message(recipient_id, message_text):
-    log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
+    #log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
     params = {
         "access_token": os.environ["HEROKU_FB_PAGE_ACCESS_TOKEN"]
     }
