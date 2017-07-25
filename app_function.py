@@ -9,12 +9,23 @@ import requests
 
 import mysql
 import setting_variables as var
+import text_cn
 from testing import *
 
 def run_testing():
     message = test()
     test_functions()
     return message
+
+def system_init():
+    ## Initialize configuration
+    read_config()
+    ### Initialize jieba
+    text_cn.init_jieba()
+    ### Initialize qa
+    qa_text_file = './qa_dataset/QA.txt'
+    var.qas["QUESTIONS"], var.qas["ANSWERS"] = text_cn.open_qa_file(qa_text_file)
+    var.qas["KEYWORDS"], var.qas["KEYWORDS_SET"], num_of_keyword = text_cn.extract_keywords(var.qas["QUESTIONS"])
 
 def read_config(json_filename=None):
     if json_filename is None:
