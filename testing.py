@@ -26,11 +26,12 @@ def test_functions():
     # print var.jieba
     # out = func.log('test')
     # print str(out)
-    
+    out = func.log('正常人的血糖應該多少才正常')
+    print str(out)
     # test_fb()
     # test_text_cn()
     # test_qa()
-    test_mysql()
+    # test_mysql()
 
 def test_fb():
     fb_recipient = '1880931025257113'

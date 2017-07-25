@@ -44,8 +44,9 @@ def read_config(json_filename=None):
         var.apis["MESSENGER_TABLE"] = data['TABLE']['messenger']
         var.variables["DEBUG"] = data['DEBUG']
 
-def log(message):  # simple wrapper for logging to stdout on heroku
-    print str(message)
+def log(message):  # simple wrapper for logging to stdout on heroku	
+    message = unicode(message, 'utf-8')
+    print message
     sys.stdout.flush()
     return 'OK'
 
