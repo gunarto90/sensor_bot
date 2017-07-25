@@ -38,7 +38,7 @@ def query(conn, sql):
         for row in cur:
             result.append(row)
     except Exception as ex:
-        message = str(ex)
+        message = str(ex) + ' (provided sql query was: [' + sql + ']'
     cur.close()
     return result, message
 
