@@ -27,6 +27,7 @@ def close(conn):
         return str(ex)
 
 def query(conn, sql):
+    sql = 'set username utf8; ' + sql
     if conn is None:
         return None, "No connection to the mysql server"
     result = []
